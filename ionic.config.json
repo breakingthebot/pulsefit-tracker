@@ -1,0 +1,7 @@
+{
+  "name": "Build_37",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

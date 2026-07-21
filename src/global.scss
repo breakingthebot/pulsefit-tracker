@@ -1,0 +1,91 @@
+/*
+ * global.scss
+ * App Global CSS defines premium glassmorphic dark themes and custom utilities.
+ * Created: 2026-07-21
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* Enforce dark palette theme by default */
+@import "@ionic/angular/css/palettes/dark.always.css";
+
+/* Custom Theme Override Properties */
+:root {
+  --ion-background-color: #0b0f19;
+  --ion-background-color-rgb: 11, 15, 25;
+  --ion-text-color: #f8fafc;
+  --ion-text-color-rgb: 248, 250, 252;
+
+  /* Premium Neon Colors mapping */
+  --ion-color-primary: #10b981; /* Neon Active Green */
+  --ion-color-primary-rgb: 16, 185, 129;
+  --ion-color-primary-contrast: #000000;
+
+  --ion-color-secondary: #7c3aed; /* Electric Violet */
+  --ion-color-secondary-rgb: 124, 58, 237;
+  --ion-color-secondary-contrast: #ffffff;
+
+  --ion-color-tertiary: #db2777; /* Rose Analytics */
+  --ion-color-tertiary-rgb: 219, 39, 119;
+  --ion-color-tertiary-contrast: #ffffff;
+
+  --ion-font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Glassmorphism Cards layout standards */
+.glass-card {
+  background: rgba(30, 41, 59, 0.45) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+  margin: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ion-color-primary), var(--ion-color-secondary));
+  opacity: 0.85;
+}
+
+.glass-card.tertiary-card::before {
+  background: linear-gradient(90deg, var(--ion-color-secondary), var(--ion-color-tertiary));
+}
+
+/* Standard animated entry class */
+.fade-in-up {
+  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
