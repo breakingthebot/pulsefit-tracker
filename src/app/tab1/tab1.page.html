@@ -1,17 +1,139 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
+  <ion-toolbar class="nav-toolbar">
+    <ion-title class="brand-title">PulseFit</ion-title>
+    <ion-badge slot="end" color="medium" class="date-badge">{{ todayDate }}</ion-badge>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <div class="dashboard-container fade-in-up">
+    @if (dailyMetrics$ | async; as metrics) {
+      
+      <!-- Goals Progress Rings Card -->
+      <ion-card class="glass-card">
+        <ion-card-header>
+          <ion-card-subtitle class="neon-subtitle">Today's Progress</ion-card-subtitle>
+          <ion-card-title class="neon-title">Goal Metrics</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row class="rings-row">
+              
+              <!-- Ring 1: Steps -->
+              <ion-col size="4" class="ring-col">
+                <div class="ring-wrapper">
+                  <svg class="progress-ring" viewBox="0 0 100 100">
+                    <circle class="ring-bg" cx="50" cy="50" r="40" />
+                    <circle class="ring-progress steps-color" cx="50" cy="50" r="40"
+                      [style.strokeDashoffset]="getStrokeOffset(metrics.stepsCount, metrics.stepsGoal)" />
+                  </svg>
+                  <div class="ring-icon-box">
+                    <ion-icon name="footsteps-outline" class="ring-icon steps-icon"></ion-icon>
+                  </div>
+                </div>
+                <div class="ring-label">Steps</div>
+                <div class="ring-value">{{ metrics.stepsCount | number }}</div>
+                <div class="ring-pct">{{ getPercentage(metrics.stepsCount, metrics.stepsGoal) }}%</div>
+              </ion-col>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+              <!-- Ring 2: Active Minutes -->
+              <ion-col size="4" class="ring-col">
+                <div class="ring-wrapper">
+                  <svg class="progress-ring" viewBox="0 0 100 100">
+                    <circle class="ring-bg" cx="50" cy="50" r="40" />
+                    <circle class="ring-progress minutes-color" cx="50" cy="50" r="40"
+                      [style.strokeDashoffset]="getStrokeOffset(metrics.activeMinutes, metrics.activeMinutesGoal)" />
+                  </svg>
+                  <div class="ring-icon-box">
+                    <ion-icon name="time-outline" class="ring-icon minutes-icon"></ion-icon>
+                  </div>
+                </div>
+                <div class="ring-label">Active Min</div>
+                <div class="ring-value">{{ metrics.activeMinutes }}m</div>
+                <div class="ring-pct">{{ getPercentage(metrics.activeMinutes, metrics.activeMinutesGoal) }}%</div>
+              </ion-col>
+
+              <!-- Ring 3: Calories -->
+              <ion-col size="4" class="ring-col">
+                <div class="ring-wrapper">
+                  <svg class="progress-ring" viewBox="0 0 100 100">
+                    <circle class="ring-bg" cx="50" cy="50" r="40" />
+                    <circle class="ring-progress calories-color" cx="50" cy="50" r="40"
+                      [style.strokeDashoffset]="getStrokeOffset(metrics.caloriesBurned, metrics.caloriesBurnedGoal)" />
+                  </svg>
+                  <div class="ring-icon-box">
+                    <ion-icon name="flame-outline" class="ring-icon calories-icon"></ion-icon>
+                  </div>
+                </div>
+                <div class="ring-label">Burned</div>
+                <div class="ring-value">{{ metrics.caloriesBurned }}</div>
+                <div class="ring-pct">{{ getPercentage(metrics.caloriesBurned, metrics.caloriesBurnedGoal) }}%</div>
+              </ion-col>
+
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Steps Simulation Controls Card -->
+      <ion-card class="glass-card tertiary-card">
+        <ion-card-header>
+          <ion-card-subtitle class="neon-subtitle">Activity Simulation</ion-card-subtitle>
+          <ion-card-title class="neon-title">Log Activity Steps</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="section-desc">Simulate walking steps to see daily metrics progress rings, active minutes, and calorie expenditures recalculate.</p>
+          <div class="simulation-btn-group">
+            <ion-button fill="outline" color="primary" class="sim-btn" (click)="simulateSteps(1000)">
+              <ion-icon slot="start" name="add-outline"></ion-icon>
+              <span>1k Steps</span>
+            </ion-button>
+            <ion-button fill="outline" color="primary" class="sim-btn" (click)="simulateSteps(5000)">
+              <ion-icon slot="start" name="add-outline"></ion-icon>
+              <span>5k Steps</span>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Hydration Card -->
+      <ion-card class="glass-card water-card">
+        <div class="water-progress-wave" [style.height.%]="getPercentage(metrics.waterIntakeMl, metrics.waterGoalMl)"></div>
+        <div class="water-card-content">
+          <ion-card-header>
+            <ion-card-subtitle class="neon-subtitle">Hydration Tracker</ion-card-subtitle>
+            <ion-card-title class="neon-title">Water Intake</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="water-status">
+              <ion-icon name="water-outline" class="water-status-icon"></ion-icon>
+              <div class="water-values">
+                <span class="current-water">{{ metrics.waterIntakeMl }} ml</span>
+                <span class="target-water">/ {{ metrics.waterGoalMl }} ml Goal</span>
+              </div>
+            </div>
+            
+            <div class="water-btn-group">
+              <ion-button fill="clear" color="light" class="water-log-btn" (click)="logWater(-250)" [disabled]="metrics.waterIntakeMl <= 0">
+                <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
+              </ion-button>
+              <span class="log-indicator-label">250ml Log</span>
+              <ion-button fill="clear" color="primary" class="water-log-btn" (click)="logWater(250)">
+                <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </div>
+      </ion-card>
+
+      <!-- Reset Option -->
+      <div class="reset-wrapper">
+        <ion-button fill="clear" color="medium" size="small" class="reset-btn" (click)="resetStats()">
+          <ion-icon slot="start" name="refresh-outline"></ion-icon>
+          <span>Reset Today's Stats</span>
+        </ion-button>
+      </div>
+
+    }
+  </div>
 </ion-content>
