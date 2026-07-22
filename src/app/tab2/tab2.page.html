@@ -1,17 +1,165 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+  <ion-toolbar class="nav-toolbar">
+    <ion-title class="brand-title">Workout Logger</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <div class="dashboard-container fade-in-up">
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+    <!-- Workout Entry Form Card -->
+    <ion-card class="glass-card">
+      <ion-card-header>
+        <ion-card-subtitle class="neon-subtitle">Activity Logger</ion-card-subtitle>
+        <ion-card-title class="neon-title">Log New Workout</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        
+        <form [formGroup]="workoutForm" (ngSubmit)="onSubmit()">
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              
+              <!-- Activity Select -->
+              <ion-col size="12" class="form-col">
+                <ion-item fill="outline" class="glass-input-item">
+                  <ion-label position="stacked">Activity Type</ion-label>
+                  <ion-select formControlName="activityType" label-placement="stacked">
+                    @for (type of activityTypes; track type) {
+                      <ion-select-option [value]="type">{{ type }}</ion-select-option>
+                    }
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+
+              <!-- Conditional Custom Name Field -->
+              @if (workoutForm.get('activityType')?.value === 'Custom') {
+                <ion-col size="12" class="form-col fade-in-up">
+                  <ion-item fill="outline" class="glass-input-item">
+                    <ion-label position="stacked">Custom Activity Name</ion-label>
+                    <ion-input type="text" formControlName="customActivityName" placeholder="e.g. Hiking, Basketball"></ion-input>
+                  </ion-item>
+                  @if (workoutForm.get('customActivityName')?.invalid && workoutForm.get('customActivityName')?.touched) {
+                    <ion-note color="danger" class="error-msg">Custom name must be 2-30 characters long.</ion-note>
+                  }
+                </ion-col>
+              }
+
+              <!-- Duration & Calories Row -->
+              <ion-col size="6" class="form-col pr-6">
+                <ion-item fill="outline" class="glass-input-item">
+                  <ion-label position="stacked">Duration (mins)</ion-label>
+                  <ion-input type="number" formControlName="durationMinutes" placeholder="30"></ion-input>
+                </ion-item>
+                @if (workoutForm.get('durationMinutes')?.invalid && workoutForm.get('durationMinutes')?.touched) {
+                  <ion-note color="danger" class="error-msg">Min: 1 min, Max: 480.</ion-note>
+                }
+              </ion-col>
+
+              <ion-col size="6" class="form-col pl-6">
+                <ion-item fill="outline" class="glass-input-item">
+                  <ion-label position="stacked">Calories (kcal)</ion-label>
+                  <ion-input type="number" formControlName="caloriesBurned" placeholder="250"></ion-input>
+                </ion-item>
+                @if (workoutForm.get('caloriesBurned')?.invalid && workoutForm.get('caloriesBurned')?.touched) {
+                  <ion-note color="danger" class="error-msg">Min: 1, Max: 5000.</ion-note>
+                }
+              </ion-col>
+
+              <!-- Notes -->
+              <ion-col size="12" class="form-col">
+                <ion-item fill="outline" class="glass-input-item">
+                  <ion-label position="stacked">Notes / Comments</ion-label>
+                  <ion-textarea formControlName="notes" placeholder="How did you feel? Details..."></ion-textarea>
+                </ion-item>
+              </ion-col>
+
+              <!-- Submit Button -->
+              <ion-col size="12" class="form-col ion-margin-top">
+                <ion-button expand="block" type="submit" [disabled]="workoutForm.invalid" class="submit-btn">
+                  <ion-icon slot="start" name="add-outline"></ion-icon>
+                  <span>Log Workout Activity</span>
+                </ion-button>
+              </ion-col>
+
+            </ion-row>
+          </ion-grid>
+        </form>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Workout History List Section -->
+    <div class="history-section-header">
+      <h3 class="history-title">Activity History</h3>
+      @if (workouts$ | async; as workouts) {
+        <ion-badge color="secondary" class="history-count-badge">{{ workouts.length }} total</ion-badge>
+      }
+    </div>
+
+    @if (workouts$ | async; as workouts) {
+      @if (workouts.length === 0) {
+        <!-- Empty State -->
+        <div class="empty-state">
+          <ion-icon name="body-outline" class="empty-icon"></ion-icon>
+          <h4>No workouts recorded yet</h4>
+          <p>Complete a session and log it above to start tracking!</p>
+        </div>
+      } @else {
+        <!-- Workout List -->
+        <ion-list class="workout-list-container">
+          @for (workout of workouts; track workout.id) {
+            <ion-item-sliding class="workout-sliding-item">
+              <ion-item class="workout-list-item" lines="none">
+                
+                <!-- Activity Icon Decorator -->
+                <div slot="start" class="activity-icon-container" [ngClass]="workout.activityType.toLowerCase() + '-bg'">
+                  <ion-icon [name]="getActivityIcon(workout.activityType)" class="activity-item-icon"></ion-icon>
+                </div>
+                
+                <!-- Title & Date -->
+                <ion-label>
+                  <h2 class="workout-item-title">
+                    {{ workout.activityType === 'Custom' ? (workout.customActivityName || 'Custom') : workout.activityType }}
+                  </h2>
+                  <p class="workout-item-date">
+                    <ion-icon name="calendar-outline" class="calendar-item-icon"></ion-icon>
+                    <span>{{ formatDate(workout.timestamp) }}</span>
+                  </p>
+                  @if (workout.notes) {
+                    <p class="workout-item-notes">{{ workout.notes }}</p>
+                  }
+                </ion-label>
+
+                <!-- Metrics badges -->
+                <div slot="end" class="workout-item-end">
+                  <div class="metric-block">
+                    <ion-icon name="time-outline" class="metric-icon minutes-color"></ion-icon>
+                    <span class="metric-text">{{ workout.durationMinutes }}m</span>
+                  </div>
+                  <div class="metric-block">
+                    <ion-icon name="flame-outline" class="metric-icon calories-color"></ion-icon>
+                    <span class="metric-text">{{ workout.caloriesBurned }} kcal</span>
+                  </div>
+                </div>
+
+                <!-- Direct Delete option for desktop/regular taps -->
+                <ion-button slot="end" fill="clear" color="danger" class="direct-delete-btn" (click)="deleteWorkout(workout.id)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+
+              </ion-item>
+
+              <!-- Sliding delete options (standard for iOS/Android lists) -->
+              <ion-item-options side="end">
+                <ion-item-option color="danger" (click)="deleteWorkout(workout.id)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </ion-list>
+      }
+    }
+
+  </div>
 </ion-content>
