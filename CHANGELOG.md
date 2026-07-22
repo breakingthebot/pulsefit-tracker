@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-22
+
+### Added
+- Created `Tab2Page` Workout Logger and History List interface.
+- Built a Reactive Form using `FormBuilder` with fields for Activity Type, Custom Name, Duration (minutes), Calories Burned (kcal), and optional Notes.
+- Integrated validations preventing entry of negative durations/calories or blank custom activities.
+- Constructed a chronological workout history list displaying individual session details (activities, category color badges, duration and calories icons).
+- Added both sliding-to-delete options (standard on iOS/Android) and clickable direct delete buttons.
+- Wrote 5 new unit specs testing validation scopes and service logging dispatches.
+
 ## [0.2.0] - 2026-07-22
 
 ### Added
