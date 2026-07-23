@@ -8,6 +8,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { Tab1Page } from './tab1.page';
 import { FitnessService } from '../services/fitness.service';
+import { DailyGoalMetrics } from '../models/workout.model';
 
 describe('Tab1Page', () => {
   let component: Tab1Page;
@@ -79,5 +80,56 @@ describe('Tab1Page', () => {
     
     expect(compiled.querySelector('.brand-title')?.textContent).toContain('PulseFit');
     expect(compiled.querySelector('.steps-color')).toBeTruthy();
+  });
+
+  it('should open settings and initialize forms values', () => {
+    fixture.detectChanges();
+    const mockMetrics: DailyGoalMetrics = {
+      stepsCount: 0,
+      stepsGoal: 10000,
+      activeMinutes: 0,
+      activeMinutesGoal: 45,
+      caloriesBurned: 1800,
+      caloriesBurnedGoal: 2400,
+      waterIntakeMl: 0,
+      waterGoalMl: 2500
+    };
+
+    component.openSettings(mockMetrics);
+
+    expect(component.isSettingsOpen).toBeTrue();
+    expect(component.goalsForm.get('stepsGoal')?.value).toBe(10000);
+    expect(component.goalsForm.get('waterGoalMl')?.value).toBe(2500);
+  });
+
+  it('should call FitnessService.updateGoals on saveSettings', () => {
+    fixture.detectChanges();
+    spyOn(service, 'updateGoals');
+    const mockMetrics: DailyGoalMetrics = {
+      stepsCount: 0,
+      stepsGoal: 10000,
+      activeMinutes: 0,
+      activeMinutesGoal: 45,
+      caloriesBurned: 1800,
+      caloriesBurnedGoal: 2400,
+      waterIntakeMl: 0,
+      waterGoalMl: 2500
+    };
+
+    component.openSettings(mockMetrics);
+    component.goalsForm.patchValue({
+      stepsGoal: 12000,
+      waterGoalMl: 3000
+    });
+
+    component.saveSettings();
+
+    expect(service.updateGoals).toHaveBeenCalledWith({
+      stepsGoal: 12000,
+      activeMinutesGoal: 45,
+      caloriesBurnedGoal: 2400,
+      waterGoalMl: 3000
+    });
+    expect(component.isSettingsOpen).toBeFalse();
   });
 });

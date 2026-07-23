@@ -1,13 +1,19 @@
-<ion-header [translucent]="true">
-  <ion-toolbar class="nav-toolbar">
-    <ion-title class="brand-title">PulseFit</ion-title>
-    <ion-badge slot="end" color="medium" class="date-badge">{{ todayDate }}</ion-badge>
-  </ion-toolbar>
-</ion-header>
+@if (dailyMetrics$ | async; as metrics) {
+  
+  <ion-header [translucent]="true">
+    <ion-toolbar class="nav-toolbar">
+      <ion-title class="brand-title">PulseFit</ion-title>
+      <ion-badge slot="end" color="medium" class="date-badge">{{ todayDate }}</ion-badge>
+      <ion-buttons slot="primary" class="header-settings-btns">
+        <ion-button (click)="openSettings(metrics)">
+          <ion-icon slot="icon-only" name="settings-outline" color="medium"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content [fullscreen]="true" class="dashboard-content">
-  <div class="dashboard-container fade-in-up">
-    @if (dailyMetrics$ | async; as metrics) {
+  <ion-content [fullscreen]="true" class="dashboard-content">
+    <div class="dashboard-container fade-in-up">
       
       <!-- Goals Progress Rings Card -->
       <ion-card class="glass-card">
@@ -134,6 +140,71 @@
         </ion-button>
       </div>
 
-    }
-  </div>
-</ion-content>
+    </div>
+  </ion-content>
+
+  <!-- Goals Settings Modal -->
+  <ion-modal [isOpen]="isSettingsOpen" (didDismiss)="isSettingsOpen = false" class="settings-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar class="nav-toolbar">
+          <ion-title class="brand-title">Goals Settings</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="isSettingsOpen = false" color="medium">Cancel</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="dashboard-content">
+        <div class="dashboard-container">
+          <ion-card class="glass-card">
+            <ion-card-header>
+              <ion-card-subtitle class="neon-subtitle">Customization</ion-card-subtitle>
+              <ion-card-title class="neon-title">Daily Targets</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <form [formGroup]="goalsForm" (ngSubmit)="saveSettings()">
+                
+                <div class="form-col ion-margin-bottom">
+                  <ion-item fill="outline" class="glass-input-item">
+                    <ion-label position="stacked">Steps Goal</ion-label>
+                    <ion-input type="number" formControlName="stepsGoal" placeholder="10000"></ion-input>
+                  </ion-item>
+                </div>
+
+                <div class="form-col ion-margin-bottom">
+                  <ion-item fill="outline" class="glass-input-item">
+                    <ion-label position="stacked">Active Time Goal (mins)</ion-label>
+                    <ion-input type="number" formControlName="activeMinutesGoal" placeholder="45"></ion-input>
+                  </ion-item>
+                </div>
+
+                <div class="form-col ion-margin-bottom">
+                  <ion-item fill="outline" class="glass-input-item">
+                    <ion-label position="stacked">Calorie Burn Goal (kcal)</ion-label>
+                    <ion-input type="number" formControlName="caloriesBurnedGoal" placeholder="2400"></ion-input>
+                  </ion-item>
+                </div>
+
+                <div class="form-col ion-margin-bottom">
+                  <ion-item fill="outline" class="glass-input-item">
+                    <ion-label position="stacked">Water Intake Goal (ml)</ion-label>
+                    <ion-input type="number" formControlName="waterGoalMl" placeholder="2500"></ion-input>
+                  </ion-item>
+                </div>
+
+                <div class="form-col ion-margin-top">
+                  <ion-button expand="block" type="submit" [disabled]="goalsForm.invalid" class="submit-btn">
+                    Save Goal Targets
+                  </ion-button>
+                </div>
+
+              </form>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+}

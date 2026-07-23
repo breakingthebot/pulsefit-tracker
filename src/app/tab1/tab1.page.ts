@@ -1,12 +1,13 @@
 /*
  * tab1/tab1.page.ts
- * Logic for daily dashboard logs dashboard showing circular active progress and water widgets.
+ * Logic for daily dashboard logs dashboard showing circular active progress, water widgets, and goals settings.
  * Connects to: services/fitness.service.ts
  * Created: 2026-07-21
  */
 
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { 
   IonHeader, 
   IonToolbar, 
@@ -22,7 +23,12 @@ import {
   IonCardContent,
   IonButton,
   IonIcon,
-  IonBadge
+  IonBadge,
+  IonModal,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonButtons
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -32,7 +38,8 @@ import {
   waterOutline, 
   addOutline, 
   removeOutline, 
-  refreshOutline 
+  refreshOutline,
+  settingsOutline
 } from 'ionicons/icons';
 
 import { FitnessService } from '../services/fitness.service';
@@ -46,6 +53,7 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     IonHeader, 
     IonToolbar, 
     IonTitle, 
@@ -60,17 +68,27 @@ import { Observable } from 'rxjs';
     IonCardContent,
     IonButton,
     IonIcon,
-    IonBadge
+    IonBadge,
+    IonModal,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonButtons
   ]
 })
 export class Tab1Page {
   private fitnessService = inject(FitnessService);
+  private fb = inject(FormBuilder);
+
   dailyMetrics$: Observable<DailyGoalMetrics> = this.fitnessService.dailyMetrics$;
   todayDate: string = new Date().toLocaleDateString('en-US', { 
     weekday: 'long', 
     month: 'short', 
     day: 'numeric' 
   });
+
+  goalsForm!: FormGroup;
+  isSettingsOpen = false;
 
   constructor() {
     addIcons({ 
@@ -80,7 +98,8 @@ export class Tab1Page {
       waterOutline, 
       addOutline, 
       removeOutline, 
-      refreshOutline 
+      refreshOutline,
+      settingsOutline
     });
   }
 
@@ -104,5 +123,23 @@ export class Tab1Page {
 
   resetStats(): void {
     this.fitnessService.resetDailyStats();
+  }
+
+  openSettings(metrics: DailyGoalMetrics): void {
+    this.goalsForm = this.fb.group({
+      stepsGoal: [metrics.stepsGoal, [Validators.required, Validators.min(1000), Validators.max(50000)]],
+      activeMinutesGoal: [metrics.activeMinutesGoal, [Validators.required, Validators.min(5), Validators.max(360)]],
+      caloriesBurnedGoal: [metrics.caloriesBurnedGoal, [Validators.required, Validators.min(500), Validators.max(10000)]],
+      waterGoalMl: [metrics.waterGoalMl, [Validators.required, Validators.min(500), Validators.max(10000)]]
+    });
+    this.isSettingsOpen = true;
+  }
+
+  saveSettings(): void {
+    if (this.goalsForm.invalid) {
+      return;
+    }
+    this.fitnessService.updateGoals(this.goalsForm.value);
+    this.isSettingsOpen = false;
   }
 }

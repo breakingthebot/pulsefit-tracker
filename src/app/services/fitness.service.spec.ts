@@ -104,6 +104,17 @@ describe('FitnessService', () => {
     service.dailyMetrics$.pipe(take(1)).subscribe(metrics => {
       expect(metrics.activeMinutes).toBe(0);
       expect(metrics.caloriesBurned).toBe(1800);
+    });
+
+    // Test goal updating
+    service.updateGoals({
+      stepsGoal: 12000,
+      waterGoalMl: 3000
+    });
+
+    service.dailyMetrics$.pipe(take(1)).subscribe(metrics => {
+      expect(metrics.stepsGoal).toBe(12000);
+      expect(metrics.waterGoalMl).toBe(3000);
       done();
     });
   });

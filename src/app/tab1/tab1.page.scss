@@ -273,3 +273,42 @@
     height: 68px;
   }
 }
+
+/* Goals Settings Overlay Forms CSS */
+.header-settings-btns {
+  margin-right: 8px;
+}
+
+.glass-input-item {
+  --background: rgba(15, 23, 42, 0.45);
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-radius: 14px;
+  --highlight-color-focused: var(--ion-color-secondary);
+  --padding-start: 12px;
+  --color: #f8fafc;
+  --placeholder-color: #64748b;
+}
+
+ion-label[position="stacked"] {
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  color: #94a3b8 !important;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px !important;
+  text-transform: uppercase;
+}
+
+.form-col {
+  padding: 6px 0;
+}
+
+.submit-btn {
+  --border-radius: 14px !important;
+  --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary)) !important;
+  font-weight: 800 !important;
+  font-size: 0.92rem !important;
+  height: 48px;
+  margin-top: 8px;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+}
+

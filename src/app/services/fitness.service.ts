@@ -97,6 +97,19 @@ export class FitnessService {
     this.updateDailyMetrics(defaults);
   }
 
+  updateGoals(goals: Partial<Pick<DailyGoalMetrics, 'stepsGoal' | 'activeMinutesGoal' | 'caloriesBurnedGoal' | 'waterGoalMl'>>): void {
+    const current = this.dailyMetricsSubject.value;
+    const updated: DailyGoalMetrics = {
+      ...current,
+      stepsGoal: goals.stepsGoal ?? current.stepsGoal,
+      activeMinutesGoal: goals.activeMinutesGoal ?? current.activeMinutesGoal,
+      caloriesBurnedGoal: goals.caloriesBurnedGoal ?? current.caloriesBurnedGoal,
+      waterGoalMl: goals.waterGoalMl ?? current.waterGoalMl
+    };
+    this.updateDailyMetrics(updated);
+  }
+
+
   /* Internal Helpers */
 
   private getDefaultDailyMetrics(): DailyGoalMetrics {
