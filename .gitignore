@@ -75,3 +75,5 @@ BUILD_NOTES.md
 .env
 .env.local
 
+
+.vercel
