@@ -43,6 +43,10 @@ A hybrid mobile application built with **Ionic 8** and **Angular 19 (Standalone)
    npm run test
    ```
 
+## Deployed
+- **Vercel Production App**: [https://pulsefit-hybrid-tracker.vercel.app](https://pulsefit-hybrid-tracker.vercel.app)
+- **GitHub Repository**: [https://github.com/breakingthebot/pulsefit-tracker](https://github.com/breakingthebot/pulsefit-tracker)
+
 ## Architecture Notes
 PulseFit employs an **offline-first state management** design pattern:
 * **Models (`src/app/models/workout.model.ts`)**: Formulates strict types for workout sessions and target metrics goals.
