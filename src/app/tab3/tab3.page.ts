@@ -20,11 +20,8 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonCardContent,
-  IonBadge,
   IonIcon,
-  IonList,
-  IonItem,
-  IonLabel
+  IonList
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -73,11 +70,8 @@ interface CategoryRatio {
     IonCardSubtitle,
     IonCardTitle,
     IonCardContent,
-    IonBadge,
     IonIcon,
-    IonList,
-    IonItem,
-    IonLabel
+    IonList
   ]
 })
 export class Tab3Page implements OnInit {

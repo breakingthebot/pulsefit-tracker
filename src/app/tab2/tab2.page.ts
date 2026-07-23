@@ -38,7 +38,8 @@ import {
   IonItemSliding,
   IonItemOptions,
   IonItemOption,
-  IonNote
+  IonNote,
+  IonBadge
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -92,7 +93,8 @@ import { Observable } from 'rxjs';
     IonItemSliding,
     IonItemOptions,
     IonItemOption,
-    IonNote
+    IonNote,
+    IonBadge
   ]
 })
 export class Tab2Page implements OnInit {
