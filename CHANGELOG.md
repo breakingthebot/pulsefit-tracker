@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-23
+
+### Added
+- Added custom goals updating method `updateGoals` in `FitnessService` supporting steps, minutes, water, and calorie targets customization.
+- Created expandable goals configuration settings overlay `ion-modal` in Tab 1 view.
+- Added settings gear toggle action inside page toolbars.
+- Increased component stylesheet budget ceilings inside `angular.json` configuration file to allow complex custom styled elements.
+- Wrote 2 new unit specs testing profile settings inputs validations and goals dispatchers (27 total passing specs in workspace).
+
 ## [0.4.0] - 2026-07-23
 
 ### Added
