@@ -1,17 +1,153 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+  <ion-toolbar class="nav-toolbar">
+    <ion-title class="brand-title">Workout Analytics</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <div class="dashboard-container fade-in-up">
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+    @if (totalWorkouts === 0) {
+      <!-- Empty State -->
+      <div class="empty-state">
+        <ion-icon name="bar-chart-outline" class="empty-icon"></ion-icon>
+        <h4>No analytics data available</h4>
+        <p>Log your first workout under the Logger tab to populate weekly metrics charts!</p>
+      </div>
+    } @else {
+      
+      <!-- Metrics Overview Cards Row -->
+      <ion-grid class="ion-no-padding overview-grid">
+        <ion-row>
+          
+          <ion-col size="4">
+            <ion-card class="glass-card stat-min-card ion-no-margin">
+              <ion-card-content class="stat-content">
+                <ion-icon name="fitness-outline" class="stat-icon purple-color"></ion-icon>
+                <div class="stat-value">{{ totalWorkouts }}</div>
+                <div class="stat-label">Workouts</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="4">
+            <ion-card class="glass-card stat-min-card ion-no-margin">
+              <ion-card-content class="stat-content">
+                <ion-icon name="time-outline" class="stat-icon minutes-color"></ion-icon>
+                <div class="stat-value">{{ totalDuration }}m</div>
+                <div class="stat-label">Total Time</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="4">
+            <ion-card class="glass-card stat-min-card ion-no-margin">
+              <ion-card-content class="stat-content">
+                <ion-icon name="flame-outline" class="stat-icon calories-color"></ion-icon>
+                <div class="stat-value">{{ totalCalories }}</div>
+                <div class="stat-label">Kcal Burned</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+        </ion-row>
+      </ion-grid>
+
+      <!-- Weekly Calorie Burn SVG Chart -->
+      <ion-card class="glass-card">
+        <ion-card-header>
+          <ion-card-subtitle class="neon-subtitle">Activity Trends</ion-card-subtitle>
+          <ion-card-title class="neon-title">Weekly Calorie Burn</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          
+          <div class="chart-container">
+            <svg class="weekly-svg-chart" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <!-- Neon Purple-Pink Gradient for Bar Chart -->
+                <linearGradient id="barGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#db2777" />
+                  <stop offset="100%" stop-color="#7c3aed" />
+                </linearGradient>
+              </defs>
+
+              <!-- Gridlines -->
+              <line class="chart-gridline" x1="10" y1="20" x2="310" y2="20" />
+              <line class="chart-gridline" x1="10" y1="60" x2="310" y2="60" />
+              <line class="chart-gridline" x1="10" y1="100" x2="310" y2="100" />
+
+              <!-- Drawing Days Columns -->
+              @for (bar of weeklyBars; track bar.dayLabel; let idx = $index) {
+                <g class="chart-column-group">
+                  <!-- Bar Column -->
+                  <rect class="chart-bar" 
+                    [attr.x]="18 + idx * 42" 
+                    [attr.y]="100 - bar.height" 
+                    width="24" 
+                    [attr.height]="bar.height" 
+                    rx="6" 
+                    ry="6"
+                    fill="url(#barGradient)" />
+                  
+                  <!-- Calorie tooltip over column -->
+                  @if (bar.calories > 0) {
+                    <text class="chart-value-text" 
+                      [attr.x]="30 + idx * 42" 
+                      [attr.y]="94 - bar.height" 
+                      text-anchor="middle">
+                      {{ bar.calories }}
+                    </text>
+                  }
+
+                  <!-- Day X label -->
+                  <text class="chart-label-text" 
+                    [attr.x]="30 + idx * 42" 
+                    y="114" 
+                    text-anchor="middle">
+                    {{ bar.dayLabel }}
+                  </text>
+                </g>
+              }
+            </svg>
+          </div>
+          
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Category Split Ratios Card -->
+      <ion-card class="glass-card tertiary-card">
+        <ion-card-header>
+          <ion-card-subtitle class="neon-subtitle">Activity Splits</ion-card-subtitle>
+          <ion-card-title class="neon-title">Category Ratios</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          
+          <ion-list class="ratio-list-container">
+            @for (cat of categoryRatios; track cat.name) {
+              <div class="ratio-row">
+                
+                <!-- Labels -->
+                <div class="ratio-labels">
+                  <span class="ratio-name">{{ cat.name }}</span>
+                  <span class="ratio-values">{{ cat.calories }} kcal ({{ cat.percentage }}%)</span>
+                </div>
+
+                <!-- Custom Progress Bar -->
+                <div class="custom-progress-track">
+                  <div class="custom-progress-bar" 
+                    [ngClass]="cat.colorClass" 
+                    [style.width.%]="cat.percentage">
+                  </div>
+                </div>
+
+              </div>
+            }
+          </ion-list>
+
+        </ion-card-content>
+      </ion-card>
+
+    }
+
+  </div>
 </ion-content>
